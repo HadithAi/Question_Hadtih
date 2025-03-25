@@ -397,6 +397,13 @@
                 displayHadith();
             }
             newKeywordInput.value = '';
+            newKeywordInput.blur(); // فوکوس رو از input بردار
+
+            const nextBtn = document.getElementById('nextBtn');
+            if (nextBtn.style.display !== 'none') {
+                nextBtn.focus(); // فوکوس رو بده به دکمه "بعدی"
+            }
+
         }
 
         function nextHadith() {
