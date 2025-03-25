@@ -239,7 +239,9 @@
                     userAddedKeywords[index] = [];
                 });
                 displayHadith();
-
+                // این دو خط رو اضافه کن:
+                document.activeElement.blur(); // المنت فعلی رو unfocus کن
+                document.getElementById('nextBtn').focus(); // دکمه بعدی رو focus کن
                
 
             };
@@ -297,9 +299,21 @@
             }
 
             let keywordCheckboxes = allKeywords.map(keyword => {
-                let checked = selectedKeywords[currentIndex].includes(keyword) ? 'checked' : '';
-                return `<label><input type="checkbox" value="${keyword}" ${checked} onchange="toggleKeyword(this)"> ${keyword}</label>`;
-            }).join('<br>');
+            let checked = selectedKeywords[currentIndex].includes(keyword);
+
+            let label = document.createElement('label');
+
+            let checkbox = document.createElement('input');
+            checkbox.type = 'checkbox';
+            checkbox.value = keyword;
+            checkbox.checked = checked;
+            checkbox.onchange = function() { toggleKeyword(this); };
+
+            label.appendChild(checkbox);
+            label.appendChild(document.createTextNode(' ' + keyword));
+
+            return label;
+        });
 
             // اگر حدیث حذف شده باشد، همه‌ی کلیدواژه‌ها را پاک کنیم
             if (deletedHadiths[currentIndex]) {
@@ -325,9 +339,16 @@
             hadithTextElement.textContent = hadith.context;
 
             // ایجاد عنصر برای نمایش کلیدواژه‌ها
+                // جایگزین کردن keywordCheckboxes در صفحه
             const keywordsContainer = document.createElement("div");
             keywordsContainer.id = "keywordsContainer";
-            keywordsContainer.innerHTML = keywordCheckboxes; // اینجا innerHTML مشکلی ندارد
+            keywordsContainer.innerHTML = ''; // اطمینان از پاک بودن
+
+            keywordCheckboxes.forEach(label => {
+            keywordsContainer.appendChild(label);
+            keywordsContainer.appendChild(document.createElement('br'));
+            });
+
 
             // اضافه کردن عناصر جدید
             hadithContainer.appendChild(deleteCheckbox);
@@ -438,12 +459,18 @@
         });
 
         document.addEventListener('keydown', function(event) {
+            const activeElement = document.activeElement;
+            const isTyping = activeElement.tagName === 'INPUT' || activeElement.tagName === 'TEXTAREA';
+
+            if (isTyping) return; // اگر در حال نوشتن بود، هیچ کاری نکن
+
             if (event.key === 'ArrowRight') {
                 nextHadith();
             } else if (event.key === 'ArrowLeft') {
                 prevHadith();
             }
         });
+
     </script>
     <script>
         if ("serviceWorker" in navigator) {
