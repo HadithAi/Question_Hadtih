@@ -219,6 +219,13 @@
             reader.onload = function(e) {
                 try {
                     hadiths = JSON.parse(e.target.result) || [];
+                    // ✅ تبدیل کلید Questions به Question اگر لازم بود
+                    hadiths = hadiths.map(h => {
+                        if (!h.Question && h.Questions) {
+                            h.Question = h.Questions;
+                        }
+                        return h;
+                    });
                     if (!Array.isArray(hadiths) || hadiths.length === 0) {
                         alert("فایل JSON معتبر نیست یا احادیثی در آن وجود ندارد.");
                         return;
